@@ -1,7 +1,7 @@
 import pygame
 import sys
 from room_generation import generate_room, draw_room
-from robot_simulation import dfs
+from robot_simulation import bfs, dfs
 from button import Button
 
 pygame.init()
@@ -9,7 +9,7 @@ window_size = (800, 600)
 screen = pygame.display.set_mode(window_size)
 pygame.display.set_caption("My Living Room")
 
-room, robot_position = generate_room()
+room, robot_position = generate_room((0, 0))
 
 font = pygame.font.Font(None, 36)
 
@@ -24,6 +24,7 @@ while True:
     timer.tick(fps)
     dfs_button.draw(screen)
     bfs_button.draw(screen)
+    draw_room(screen, room, robot_position, font)
     mouse_pos = pygame.mouse.get_pos()
     pygame.display.update()
 
@@ -39,5 +40,13 @@ while True:
             dfs(screen, font, robot_position, room, set())
             pygame.display.update()
         elif bfs_button.is_clicked(event):
-            dfs(screen, font, robot_position, room, set())
+            bfs(screen, font, robot_position, room)
+            pygame.display.update()
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            # Check if the user clicked on a tile
+            robot_position = pygame.mouse.get_pos()
+            #convert the position to the tile position
+            robot_position = (robot_position[0] // 50, robot_position[1] // 50)
+            draw_room(screen, room, robot_position, font)
+            bfs(screen, font, robot_position, room)
             pygame.display.update()

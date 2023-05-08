@@ -1,5 +1,6 @@
 import random
 import pygame
+from zmq import NULL
 
 room_width = 8
 room_height = 10
@@ -11,7 +12,9 @@ objects = [
     {"name": "bed", "width": 2, "height": 5},
 ]
 
-def generate_room():
+def generate_room(starting_point):
+    
+    
     room = [[0 for y in range(room_height)] for x in range(room_width)]
 
     # Define the objects to add to the room
@@ -57,7 +60,7 @@ def generate_room():
             for y in range(obj_y, obj_y + obj["height"]):
                 room[x][y] = obj["name"]
 
-    robot_position = (0, 0)
+    robot_position = starting_point
 
     return room, robot_position
 
