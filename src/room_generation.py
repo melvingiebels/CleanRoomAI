@@ -14,13 +14,6 @@ objects = [
 def generate_room(starting_point):
     room = [[0 for y in range(room_height)] for x in range(room_width)]
 
-    # Define the objects to add to the room
-    objects = [
-        {"name": "plant", "width": 1, "height": 1},
-        {"name": "tv", "width": 3, "height": 1},
-        {"name": "bed", "width": 2, "height": 5},
-    ]
-
     # Check for overlapping objects and add one object of each type to the room
     for obj in objects:
         obj_coords = []
@@ -66,48 +59,90 @@ def draw_room(screen, room, robot_position, font, steps):
         for y in range(room_height):
             if room[x][y] == 0:
                 # Dirty tile
-                tile_color = (255, 255, 255)
+                img = pygame.image.load("images/dirty_tile.png")
+                screen.blit(img, (x * tile_size, y * tile_size))
             elif room[x][y] == 1:
                 # Clean tile
-                tile_color = (0, 255, 0)
+                img = pygame.image.load("images/clean_tile.png")
+                screen.blit(img, (x * tile_size, y * tile_size))
             elif room[x][y] == "plant":
                 # Plant tile
-                tile_color = (0, 0, 255)
+                img = pygame.image.load("images/plant.png")
+                screen.blit(img, (x * tile_size, y * tile_size))
             elif room[x][y] == "tv":
                 # Tv tile
-                tile_color = (255, 255, 0)
+                img = pygame.image.load("images/tv.png")
+                screen.blit(img, (x * tile_size, y * tile_size))
             elif room[x][y] == "bed":
                 # Bed tile
                 tile_color = (128, 0, 128)
-            tile_rect = pygame.Rect(x * tile_size, y * tile_size, tile_size, tile_size)
-            pygame.draw.rect(screen, tile_color, tile_rect)
 
-            # Draw the robot as a red rectangle
-            robot_rect = pygame.Rect(
-                robot_position[0] * tile_size,
-                robot_position[1] * tile_size,
-                tile_size,
-                tile_size,
-            )
-            pygame.draw.rect(screen, (255, 0, 0), robot_rect)
+    # Rest of the code...
 
-            # Calculate the total number of spaces occupied by objects
-            occupied_spaces = sum(obj["width"] * obj["height"] for obj in objects)
+            
+            # tile_rect = pygame.Rect(x * tile_size, y * tile_size, tile_size, tile_size)
+            # pygame.draw.rect(screen, tile_color, tile_rect)
 
-            # Display the current statistics of the room
-            text = font.render(
-                "Cleaned: {} / Total: {} | Steps: {}".format(
-                    sum(row.count(1) for row in room),
-                    room_width * room_height - occupied_spaces,
-                    steps
-                ),
-                True,
-                (0, 0, 0),
-            )
-            screen.blit(text, (10, 10))
-            time = font.render(
-                "Time: {}".format(pygame.time.get_ticks() // 1000),
-                True,
-                (0, 0, 0),
-            )
-            screen.blit(time, (10, 30))
+    # Draw the robot as a red rectangle
+    robot_rect = pygame.Rect(
+        robot_position[0] * tile_size,
+        robot_position[1] * tile_size,
+        tile_size,
+        tile_size,
+    )
+    pygame.draw.rect(screen, (255, 0, 0), robot_rect)
+
+    # Calculate the total number of spaces occupied by objects
+    occupied_spaces = sum(obj["width"] * obj["height"] for obj in objects)
+
+    # Display the current statistics of the room
+    text = font.render(
+        "Cleaned: {} / Total: {} | Steps: {}".format(
+            sum(row.count(1) for row in room),
+            room_width * room_height - occupied_spaces,
+            steps
+        ),
+        True,
+        (0, 0, 0),
+    )
+    screen.blit(text, (10, 10))
+    time = font.render(
+        "Time: {}".format(pygame.time.get_ticks() // 1000),
+        True,
+        (0, 0, 0),
+    )
+    screen.blit(time, (10, 30))
+
+    pygame.display.flip()
+
+# Initialize Pygame
+pygame.init()
+
+# Set up the screen
+screen_width = room_width * tile_size
+screen_height = room_height * tile_size
+screen = pygame.display.set_mode((screen_width, screen_height))
+pygame.display.set_caption("Room Cleaning Simulation")
+
+# Load font
+font = pygame.font.SysFont("Arial", 18)
+
+# Generate the room
+starting_point = (random.randint(0, room_width - 1), random.randint(0, room_height - 1))
+room, robot_position = generate_room(starting_point)
+
+# Main loop
+running = True
+steps = 0
+
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    # Update the screen
+    draw_room(screen, room, robot_position, font, steps)
+    steps += 1
+
+# Quit Pygame
+pygame.quit()
