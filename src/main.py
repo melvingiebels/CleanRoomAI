@@ -21,7 +21,7 @@ astar_button = Button(650, 110, 120, 40, "Run A*", (255, 255, 0), (0, 0, 0), 24)
 timer = pygame.time.Clock()
 fps = 60
 
-# Add a variable to keep track of the chosen algorithm
+# Add a variable to keep track of the chosen algorithm 
 chosen_algorithm = None
 
 while True:
