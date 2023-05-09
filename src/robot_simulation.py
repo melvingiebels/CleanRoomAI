@@ -38,13 +38,16 @@ def dfs(screen, font, position, room, visited):
 
 
 from collections import deque
+from collections import deque
 
 def bfs(screen, font, position, room):
-
+    starting_point = position
     visited = set()
     queue = deque([(position, room)])
     draw_room(screen, room, position, font)
-
+    path = []
+    parent = {}  # Store parent position for each visited position
+    
     while queue:
         position, room = queue.popleft()
         x, y = position
@@ -74,14 +77,32 @@ def bfs(screen, font, position, room):
         time.sleep(0.1)
 
         if position == (0, 0):
-            # Reached the starting point, return
-            return
+            # Reached the starting point, break the loop
+            break
 
-        # Add neighboring positions to the queue
+        # Add neighboring positions to the queue and store their parent positions
         neighbors = [(x, y - 1), (x, y + 1), (x - 1, y), (x + 1, y)]
         for neighbor in neighbors:
-            queue.append((neighbor, room))
+            if neighbor not in parent:  # Only add neighbors not already in the parent dictionary
+                queue.append((neighbor, room))
+                parent[neighbor] = position
 
-# Example usage:
+    # Reconstruct the shortest path from the destination to the starting point
+    position = (0, 0)
+    while position != starting_point:
+        path.append(position)
+        position = parent[position]
+    path.append(starting_point)
+    path.reverse()
 
-# Example usage:
+    # Walk the path to the destination
+    walk_back(screen, font, room, path)
+
+
+def walk_back(screen, font, room, path):
+    for position in path:
+        print(position)
+        robot_position = position
+        draw_room(screen, room, robot_position, font)
+        pygame.display.update()
+        time.sleep(0.5)
