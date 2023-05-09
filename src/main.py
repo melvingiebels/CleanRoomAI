@@ -1,7 +1,7 @@
 import pygame
 import sys
 from room_generation import generate_room, draw_room
-from robot_simulation import bfs, dfs
+from robot_simulation import bfs, dfs, a_star
 from button import Button
 
 pygame.init()
@@ -24,7 +24,7 @@ while True:
     timer.tick(fps)
     dfs_button.draw(screen)
     bfs_button.draw(screen)
-    draw_room(screen, room, robot_position, font)
+    draw_room(screen, room, robot_position, font, steps=0)
     mouse_pos = pygame.mouse.get_pos()
     pygame.display.update()
 
@@ -37,7 +37,7 @@ while True:
             pygame.quit()
             sys.exit()
         elif dfs_button.is_clicked(event):
-            dfs(screen, font, robot_position, room, set())
+            dfs(screen, font, robot_position, room, set(), steps=0)
             pygame.display.update()
         elif bfs_button.is_clicked(event):
             bfs(screen, font, robot_position, room)
@@ -47,6 +47,6 @@ while True:
             robot_position = pygame.mouse.get_pos()
             #convert the position to the tile position
             robot_position = (robot_position[0] // 50, robot_position[1] // 50)
-            draw_room(screen, room, robot_position, font)
-            bfs(screen, font, robot_position, room)
+            draw_room(screen, room, robot_position, font, steps=0)
+            a_star(screen, font, robot_position, room)
             pygame.display.update()

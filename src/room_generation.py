@@ -1,6 +1,5 @@
 import random
 import pygame
-from zmq import NULL
 
 room_width = 8
 room_height = 10
@@ -13,8 +12,6 @@ objects = [
 ]
 
 def generate_room(starting_point):
-    
-    
     room = [[0 for y in range(room_height)] for x in range(room_width)]
 
     # Define the objects to add to the room
@@ -64,7 +61,7 @@ def generate_room(starting_point):
 
     return room, robot_position
 
-def draw_room(screen, room, robot_position, font):
+def draw_room(screen, room, robot_position, font, steps):
     for x in range(room_width):
         for y in range(room_height):
             if room[x][y] == 0:
@@ -99,9 +96,10 @@ def draw_room(screen, room, robot_position, font):
 
             # Display the current statistics of the room
             text = font.render(
-                "Cleaned: {} / Total: {}".format(
+                "Cleaned: {} / Total: {} | Steps: {}".format(
                     sum(row.count(1) for row in room),
-                    room_width * room_height - occupied_spaces
+                    room_width * room_height - occupied_spaces,
+                    steps
                 ),
                 True,
                 (0, 0, 0),
