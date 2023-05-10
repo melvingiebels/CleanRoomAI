@@ -204,7 +204,7 @@ def random_cleaning(screen, font, position, room):
     draw_room(screen, room, position, font, steps=moves)
     pygame.display.update()
     print(f"Random cleaning took {moves} steps.")
-    return position
+    return position, moves
 
 
 def count_dirty_tiles(room):

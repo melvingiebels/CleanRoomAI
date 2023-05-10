@@ -1,3 +1,4 @@
+import random
 import pygame
 import sys
 from room_generation import generate_room, draw_room
@@ -18,6 +19,7 @@ dfs_button = Button(440, 10, 120, 40, "Run DFS", (0, 128, 0), (255, 255, 255), 2
 bfs_button = Button(440, 60, 120, 40, "Run BFS", (0, 0, 128), (255, 255, 255), 24)
 astar_button = Button(440, 110, 120, 40, "Run A*", (255, 255, 0), (0, 0, 0), 24)
 random_button = Button(440, 160, 120, 40, "Run Random", (255, 255, 128), (0, 0, 0), 24)
+random_bulk_button = Button(440, 210, 120, 40, "Run RandomX3", (128, 255, 128), (0, 0, 0), 24)
 
 timer = pygame.time.Clock()
 fps = 60
@@ -33,6 +35,7 @@ while True:
     bfs_button.draw(screen)
     astar_button.draw(screen)
     random_button.draw(screen)
+    random_bulk_button.draw(screen)
     mouse_pos = pygame.mouse.get_pos()
     pygame.display.update()
 
@@ -58,4 +61,21 @@ while True:
         elif astar_button.is_clicked(event):
             a_star(screen, font, robot_position, room)
         elif random_button.is_clicked(event):
-            robot_position = random_cleaning(screen, font, robot_position, room)
+            robot_position, moves = random_cleaning(screen, font, robot_position, room)
+        elif random_bulk_button.is_clicked(event):
+            num_rooms = 3
+            total_path_length = 0
+            for i in range(num_rooms):
+                print(f"New room {i+1}")
+
+                # Make new room
+                room, robot_position = generate_room((0, 0))
+                draw_room(screen, room, robot_position, font, steps=0)
+
+                #Start cleaning
+                robot_position, path_length = random_cleaning(screen, font, robot_position, room)
+                total_path_length += path_length
+                print(f"Total now is: {total_path_length:.2f}")
+
+            average_path_length = total_path_length / num_rooms
+            print(f"Random movement average path length: {average_path_length:.2f}")
