@@ -140,8 +140,7 @@ def a_star(screen, font, position, room):
         visited.add(position)
 
         # Clean the tile if it is dirty
-        if room[x][y] == 0:
-            room[x][y] = 1
+        room[x][y] = 2
 
         # Update the robot's position and display the room
         robot_position = position

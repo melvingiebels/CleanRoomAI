@@ -56,6 +56,8 @@ def generate_room(starting_point):
 
 DIRTY_TILE_IMAGE = pygame.image.load("images/dirty_tile.jpg")
 CLEAN_TILE_IMAGE = pygame.image.load("images/clean_tile.jpg")
+PATHING_TILE_IMAGE = pygame.image.load("images/pathing_tile.jpg")
+
 PLANT_IMAGE = pygame.image.load("images/plant_clean.jpg")
 TV_IMAGE = pygame.image.load("images/tv_dirty.jpg")
 TV_IMAGE = pygame.transform.scale(TV_IMAGE, (tile_size * 3, tile_size))
@@ -74,6 +76,9 @@ def draw_room(screen, room, robot_position, font, steps):
             elif room[x][y] == 1:
                 # Clean tile
                 screen.blit(CLEAN_TILE_IMAGE, (x * tile_size, y * tile_size))
+            elif room[x][y] == 2:
+                # Pathing tile
+                screen.blit(PATHING_TILE_IMAGE, (x * tile_size, y * tile_size))
             elif room[x][y] == "plant":
                 # Plant tile
                 screen.blit(PLANT_IMAGE, (x * tile_size, y * tile_size))
