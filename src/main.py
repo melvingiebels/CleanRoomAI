@@ -21,7 +21,7 @@ astar_button = Button(650, 110, 120, 40, "Run A*", (255, 255, 0), (0, 0, 0), 24)
 timer = pygame.time.Clock()
 fps = 60
 
-# Add a variable to keep track of the chosen algorithm 
+# Add a variable to keep track of the chosen algorithm
 chosen_algorithm = None
 
 while True:
@@ -54,18 +54,3 @@ while True:
             bfs(screen, font, robot_position, room)
         elif astar_button.is_clicked(event):
             a_star(screen, font, robot_position, room)
-
-        # elif dfs_button.is_clicked(event):
-        #     dfs(screen, font, robot_position, room, set(), steps=0)
-        #     pygame.display.update()
-        # elif bfs_button.is_clicked(event):
-        #     bfs(screen, font, robot_position, room)
-        #     pygame.display.update()
-        # elif event.type == pygame.MOUSEBUTTONDOWN:
-        #     # Check if the user clicked on a tile
-        #     robot_position = pygame.mouse.get_pos()
-        #     #convert the position to the tile position
-        #     robot_position = (robot_position[0] // 50, robot_position[1] // 50)
-        #     draw_room(screen, room, robot_position, font, steps=0)
-        #     a_star(screen, font, robot_position, room)
-        #     pygame.display.update()
