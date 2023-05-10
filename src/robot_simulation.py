@@ -2,6 +2,10 @@ import time
 from room_generation import draw_room, room_width, room_height
 import pygame
 from collections import deque
+import heapq
+from math import sqrt
+from collections import deque
+import random
 
 
 def dfs(screen, font, position, room, visited, steps):
@@ -31,14 +35,11 @@ def dfs(screen, font, position, room, visited, steps):
     time.sleep(0.1)
 
     # Move in all possible directions (up, down, left, right)
-    dfs(screen, font, (x, y - 1), room, visited, steps=steps+1)
-    dfs(screen, font, (x, y + 1), room, visited, steps=steps+1)
-    dfs(screen, font, (x - 1, y), room, visited, steps=steps+1)
-    dfs(screen, font, (x + 1, y), room, visited, steps=steps+1)
+    dfs(screen, font, (x, y - 1), room, visited, steps=steps + 1)
+    dfs(screen, font, (x, y + 1), room, visited, steps=steps + 1)
+    dfs(screen, font, (x - 1, y), room, visited, steps=steps + 1)
+    dfs(screen, font, (x + 1, y), room, visited, steps=steps + 1)
 
-
-from collections import deque
-from collections import deque
 
 def bfs(screen, font, position, room):
     starting_point = position
@@ -83,7 +84,9 @@ def bfs(screen, font, position, room):
         # Add neighboring positions to the queue and store their parent positions
         neighbors = [(x, y - 1), (x, y + 1), (x - 1, y), (x + 1, y)]
         for neighbor in neighbors:
-            if neighbor not in parent:  # Only add neighbors not already in the parent dictionary
+            if (
+                neighbor not in parent
+            ):  # Only add neighbors not already in the parent dictionary
                 queue.append((neighbor, room))
                 parent[neighbor] = position
 
@@ -98,19 +101,6 @@ def bfs(screen, font, position, room):
     # Walk the path to the destination
     walk_back(screen, font, room, path)
 
-
-def walk_back(screen, font, room, path):
-    for position in path:
-        print(position)
-        robot_position = position
-        draw_room(screen, room, robot_position, font, steps=len(path)-1)
-        pygame.display.update()
-        time.sleep(0.5)
-
-
-
-import heapq
-from math import sqrt
 
 def a_star(screen, font, position, room):
     starting_point = position
@@ -155,7 +145,9 @@ def a_star(screen, font, position, room):
         # Add neighboring positions to the queue and store their parent positions
         neighbors = [(x, y - 1), (x, y + 1), (x - 1, y), (x + 1, y)]
         for neighbor in neighbors:
-            if neighbor not in parent:  # Only add neighbors not already in the parent dictionary
+            if (
+                neighbor not in parent
+            ):  # Only add neighbors not already in the parent dictionary
                 cost[neighbor] = cost[position] + 1
                 queue.append((cost[neighbor] + heuristic(neighbor), neighbor, room))
                 parent[neighbor] = position
@@ -170,6 +162,68 @@ def a_star(screen, font, position, room):
 
     # Walk the path to the destination
     walk_back(screen, font, room, path)
+
+
+def random_cleaning(screen, font, position, room):
+    cleaned = 0
+    moves = 0
+    dirty_tiles = count_dirty_tiles(room)
+
+    while cleaned < dirty_tiles:
+        x, y = position
+
+        # Randomly choose a direction to move
+        dx, dy = random.choice([(0, -1), (0, 1), (-1, 0), (1, 0)])
+
+        # Check if the move is valid
+        if (
+            (x + dx) < 0
+            or (x + dx) >= room_width
+            or (y + dy) < 0
+            or (y + dy) >= room_height
+        ):
+            # Out of bounds
+            continue
+
+        if room[x + dx][y + dy] in ["plant", "tv", "bed"]:
+            # Blocked by an object
+            continue
+
+        # Update the position
+        position = (x + dx, y + dy)
+
+        # Clean the tile if it is dirty
+        if room[x + dx][y + dy] == 0:
+            room[x + dx][y + dy] = 1
+            cleaned += 1
+
+        draw_room(screen, room, position, font, steps=moves)
+        pygame.display.update()
+        time.sleep(0.01)
+        moves += 1
+    draw_room(screen, room, position, font, steps=moves)
+    pygame.display.update()
+    print(f"Random cleaning took {moves} steps.")
+    return position
+
+
+def count_dirty_tiles(room):
+    count = 0
+    for row in room:
+        for tile in row:
+            if tile == 0:
+                count += 1
+    return count
+
+
+def walk_back(screen, font, room, path):
+    for position in path:
+        print(position)
+        robot_position = position
+        draw_room(screen, room, robot_position, font, steps=len(path) - 1)
+        pygame.display.update()
+        time.sleep(0.5)
+
 
 def heuristic(position):
     # Calculate the Euclidean distance from position to the charging station

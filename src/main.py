@@ -1,7 +1,7 @@
 import pygame
 import sys
 from room_generation import generate_room, draw_room
-from robot_simulation import bfs, dfs, a_star
+from robot_simulation import bfs, dfs, a_star, random_cleaning
 from button import Button
 
 pygame.init()
@@ -17,9 +17,12 @@ font = pygame.font.Font(None, 36)
 dfs_button = Button(440, 10, 120, 40, "Run DFS", (0, 128, 0), (255, 255, 255), 24)
 bfs_button = Button(440, 60, 120, 40, "Run BFS", (0, 0, 128), (255, 255, 255), 24)
 astar_button = Button(440, 110, 120, 40, "Run A*", (255, 255, 0), (0, 0, 0), 24)
+random_button = Button(440, 160, 120, 40, "Run Random", (255, 255, 128), (0, 0, 0), 24)
 
 timer = pygame.time.Clock()
 fps = 60
+
+draw_room(screen, room, robot_position, font, steps=0)
 
 # Add a variable to keep track of the chosen algorithm
 chosen_algorithm = None
@@ -29,7 +32,7 @@ while True:
     dfs_button.draw(screen)
     bfs_button.draw(screen)
     astar_button.draw(screen)
-    draw_room(screen, room, robot_position, font, steps=0)
+    random_button.draw(screen)
     mouse_pos = pygame.mouse.get_pos()
     pygame.display.update()
 
@@ -54,3 +57,5 @@ while True:
             bfs(screen, font, robot_position, room)
         elif astar_button.is_clicked(event):
             a_star(screen, font, robot_position, room)
+        elif random_button.is_clicked(event):
+            robot_position = random_cleaning(screen, font, robot_position, room)

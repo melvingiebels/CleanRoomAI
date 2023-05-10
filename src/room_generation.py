@@ -57,6 +57,7 @@ def generate_room(starting_point):
 
     return room, robot_position
 
+# Imports images
 DIRTY_TILE_IMAGE = pygame.image.load("images/dirty_tile.jpg")
 CLEAN_TILE_IMAGE = pygame.image.load("images/clean_tile.jpg")
 PATHING_TILE_IMAGE = pygame.image.load("images/pathing_tile.jpg")
@@ -122,7 +123,7 @@ def draw_room(screen, room, robot_position, font, steps):
     cleaned_text = font.render(
     "Cleaned: {}/{}".format(
         sum(row.count(1) for row in room),
-        room_width * room_height - occupied_spaces
+        room_width * room_height - occupied_spaces - 1
     ),
         True,
         (0, 0, 0)
