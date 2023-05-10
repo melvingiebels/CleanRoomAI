@@ -14,9 +14,9 @@ room, robot_position = generate_room((0, 0))
 font = pygame.font.Font(None, 36)
 
 # Create buttons for the different search algorithms
-dfs_button = Button(650, 10, 120, 40, "Run DFS", (0, 128, 0), (255, 255, 255), 24)
-bfs_button = Button(650, 60, 120, 40, "Run BFS", (0, 0, 128), (255, 255, 255), 24)
-astar_button = Button(650, 110, 120, 40, "Run A*", (255, 255, 0), (0, 0, 0), 24)
+dfs_button = Button(440, 10, 120, 40, "Run DFS", (0, 128, 0), (255, 255, 255), 24)
+bfs_button = Button(440, 60, 120, 40, "Run BFS", (0, 0, 128), (255, 255, 255), 24)
+astar_button = Button(440, 110, 120, 40, "Run A*", (255, 255, 0), (0, 0, 0), 24)
 
 timer = pygame.time.Clock()
 fps = 60
