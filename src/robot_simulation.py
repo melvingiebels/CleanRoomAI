@@ -165,12 +165,27 @@ def a_star(screen, font, position, room):
 
 
 def random_cleaning(screen, font, position, room):
-    cleaned = 0
     moves = 0
-    dirty_tiles = count_dirty_tiles(room)
 
-    while cleaned < dirty_tiles:
+    while True:
         x, y = position
+
+        # Check if the robot is trapped
+        trapped = True
+        for dx, dy in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
+            if (
+                (x + dx) >= 0
+                and (x + dx) < room_width
+                and (y + dy) >= 0
+                and (y + dy) < room_height
+                and room[x + dx][y + dy] not in ["plant", "tv", "bed"]
+            ):
+                trapped = False
+                break
+
+        if trapped:
+            print("Faulty room. Regenerating...")
+            return None
 
         # Randomly choose a direction to move
         dx, dy = random.choice([(0, -1), (0, 1), (-1, 0), (1, 0)])
@@ -195,16 +210,28 @@ def random_cleaning(screen, font, position, room):
         # Clean the tile if it is dirty
         if room[x + dx][y + dy] == 0:
             room[x + dx][y + dy] = 1
-            cleaned += 1
 
-        draw_room(screen, room, position, font, steps=moves)
-        pygame.display.update()
-        time.sleep(0.01)
         moves += 1
-    draw_room(screen, room, position, font, steps=moves)
-    pygame.display.update()
+
+        # Update the room and display it periodically
+        # if moves % 100 == 0:
+        #     draw_room(screen, room, position, font, steps=moves)
+        #     pygame.display.update()
+
+        # Check if all tiles are cleaned
+        if count_dirty_tiles(room) == 0:
+            break
+
+        # Check if it's taking too many steps
+        if moves >= 3000:
+            print("Faulty room. Regenerating...")
+            return None
+
+    # draw_room(screen, room, position, font, steps=moves)
+    # pygame.display.update()
     print(f"Random cleaning took {moves} steps.")
     return position, moves
+
 
 
 def count_dirty_tiles(room):

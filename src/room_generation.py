@@ -12,45 +12,28 @@ objects = [
 ]
 
 def generate_room(starting_point):
-    room = [[0 for y in range(room_height)] for x in range(room_width)]
+    room = [[0 for _ in range(room_height)] for _ in range(room_width)]
 
     # Add the charging station
     room[0][0] = 3
 
     # Check for overlapping objects and add one object of each type to the room
     for obj in objects:
-        obj_coords = []
-        for x in range(obj["width"]):
-            for y in range(obj["height"]):
-                obj_coords.append((x, y))
+        obj_width = obj["width"]
+        obj_height = obj["height"]
 
-        # Check if any of the object coordinates are already occupied
         is_occupied = True
         while is_occupied:
-            obj_x = random.randint(0, room_width - obj["width"])
-            obj_y = random.randint(0, room_height - obj["height"])
-            is_occupied = False
-            for coord in obj_coords:
-                x = obj_x + coord[0]
-                y = obj_y + coord[1]
-                if room[x][y] != 0:
-                    is_occupied = True
-                    break
-                # Check if the tile is too close to another object
-                for x_offset in range(-1, obj["width"] + 1):
-                    for y_offset in range(-1, obj["height"] + 1):
-                        if 0 <= x + x_offset < room_width and 0 <= y + y_offset < room_height:
-                            if room[x + x_offset][y + y_offset] != 0:
-                                is_occupied = True
-                                break
-                    if is_occupied:
-                        break
-                if is_occupied:
-                    break
+            obj_x = random.randint(0, room_width - obj_width)
+            obj_y = random.randint(0, room_height - obj_height)
+            is_occupied = any(
+                any(room[x][y] != 0 for y in range(obj_y, obj_y + obj_height))
+                for x in range(obj_x, obj_x + obj_width)
+            )
 
         # Add the object to the room
-        for x in range(obj_x, obj_x + obj["width"]):
-            for y in range(obj_y, obj_y + obj["height"]):
+        for x in range(obj_x, obj_x + obj_width):
+            for y in range(obj_y, obj_y + obj_height):
                 room[x][y] = obj["name"]
 
     robot_position = starting_point
@@ -73,6 +56,8 @@ ROBOT_IMAGE = pygame.transform.scale(ROBOT_IMAGE, (tile_size, tile_size))
 
 
 def draw_room(screen, room, robot_position, font, steps):
+    dirty_tiles = set()  # Tracks the positions of dirty tiles
+
     for x in range(room_width):
         for y in range(room_height):
             if room[x][y] == 0:
@@ -148,3 +133,14 @@ def draw_room(screen, room, robot_position, font, steps):
     screen.blit(cleaned_text, cleaned_text_position)
     screen.blit(steps_text, steps_text_position)
     screen.blit(time_text, time_text_position)
+
+
+def generate_and_draw_room(screen, font):
+    # Generate a new room
+    room, robot_position = generate_room((0, 0))
+
+    # Draw the room on the screen
+    draw_room(screen, room, robot_position, font, steps=0)
+    pygame.display.update()
+
+    return room, robot_position
