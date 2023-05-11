@@ -144,3 +144,12 @@ def generate_and_draw_room(screen, font):
     pygame.display.update()
 
     return room, robot_position
+
+def clean_current_room(screen, font, room):
+    for x in range(room_width):
+        for y in range(room_height):
+            if room[x][y] == 2:
+                room[x][y] = 1
+
+    draw_room(screen, room, (0, 0), font, steps=0)
+    pygame.display.update()

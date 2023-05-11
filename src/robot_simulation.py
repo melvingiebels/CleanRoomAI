@@ -50,6 +50,7 @@ def bfs(screen, font, position, room):
     parent = {}  # Store parent position for each visited position
 
     while queue:
+        pygame.event.get()  # Add this line to prevent the window from freezing
         position, room = queue.popleft()
         x, y = position
 
@@ -67,9 +68,8 @@ def bfs(screen, font, position, room):
 
         visited.add(position)
 
-        # Clean the tile if it is dirty
-        if room[x][y] == 0:
-            room[x][y] = 1
+        # Pathing tile back to charging station
+        room[x][y] = 2
 
         # Update the robot's position and display the room
         robot_position = position
@@ -129,7 +129,7 @@ def a_star(screen, font, position, room):
 
         visited.add(position)
 
-        # Clean the tile if it is dirty
+        # Pathing tile back to charging station
         room[x][y] = 2
 
         # Update the robot's position and display the room
@@ -164,7 +164,7 @@ def a_star(screen, font, position, room):
     walk_back(screen, font, room, path)
 
 
-def random_cleaning(screen, font, position, room):
+def random_cleaning(screen, font, position, room, is_displayed):
     moves = 0
 
     while True:
@@ -213,17 +213,16 @@ def random_cleaning(screen, font, position, room):
 
         moves += 1
 
-        # Update the room and display it periodically
-        # if moves % 100 == 0:
-        #     draw_room(screen, room, position, font, steps=moves)
-        #     pygame.display.update()
+        if is_displayed:
+            draw_room(screen, room, position, font, steps=moves)
+            pygame.display.update()
 
         # Check if all tiles are cleaned
         if count_dirty_tiles(room) == 0:
             break
 
         # Check if it's taking too many steps
-        if moves >= 3000:
+        if moves >= 5000:
             print("Faulty room. Regenerating...")
             return None
 
@@ -231,7 +230,6 @@ def random_cleaning(screen, font, position, room):
     # pygame.display.update()
     print(f"Random cleaning took {moves} steps.")
     return position, moves
-
 
 
 def count_dirty_tiles(room):
@@ -245,11 +243,12 @@ def count_dirty_tiles(room):
 
 def walk_back(screen, font, room, path):
     for position in path:
+        pygame.event.get()  # Add this line to prevent the window from freezing
         print(position)
         robot_position = position
         draw_room(screen, room, robot_position, font, steps=len(path) - 1)
         pygame.display.update()
-        time.sleep(0.5)
+        time.sleep(0.2)
 
 
 def heuristic(position):
