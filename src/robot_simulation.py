@@ -111,6 +111,7 @@ def a_star(screen, font, position, room):
     cost = {position: 0}
 
     while queue:
+        pygame.event.get()  # Add this line to prevent the window from freezing
         queue.sort()
         _, position, room = queue.pop(0)
         x, y = position
