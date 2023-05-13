@@ -2,7 +2,7 @@ import random
 import pygame
 import sys
 from room_generation import generate_room, draw_room, generate_and_draw_room, clean_current_room
-from robot_simulation import bfs, dfs, a_star, random_cleaning
+from robot_simulation import bfs, dfs, a_star, pattern_cleaning, random_cleaning
 from button import Button
 
 pygame.init()
@@ -54,7 +54,7 @@ while True:
         elif astar_button.is_clicked(event):
             a_star(screen, font, robot_position, room)
         elif random_button.is_clicked(event):
-            robot_position, moves = random_cleaning(screen, font, robot_position, room, True)
+            robot_position, moves = pattern_cleaning(screen, font, robot_position, room, True)
         elif random_bulk_button.is_clicked(event):
             num_rooms = 1000
             total_path_length = 0

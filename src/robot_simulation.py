@@ -8,6 +8,7 @@ from collections import deque
 import random
 
 
+
 def dfs(screen, font, position, room, visited, steps):
     x, y = position
     if x < 0 or x >= room_width or y < 0 or y >= room_height:
@@ -256,3 +257,89 @@ def heuristic(position):
     # Calculate the Euclidean distance from position to the charging station
     x, y = position
     return ((x - 0) ** 2 + (y - 0) ** 2) ** 0.5
+
+
+def pattern_cleaning(screen, font, position, room, is_displayed):
+    moves = 0
+    sweep_direction = 1  # 1 represents moving right, -1 represents moving left
+    x, y = position
+    delay = 0.2  # Delay in seconds
+
+    clock = pygame.time.Clock()
+
+    while True:
+        # Check if the robot is trapped
+        trapped = True
+        for dx, dy in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
+            if (
+                (x + dx) >= 0
+                and (x + dx) < room_width
+                and (y + dy) >= 0
+                and (y + dy) < room_height
+                and room[x + dx][y + dy] not in ["plant", "tv", "bed"]
+            ):
+                trapped = False
+                break
+
+        if trapped:
+            print("Faulty room. Regenerating...")
+            return None
+
+        # Check if the move is valid
+        next_x = x + sweep_direction
+        if (
+            next_x < 0
+            or next_x >= room_width
+            or room[next_x][y] in ["plant", "tv", "bed"]
+        ):
+            # Check if there is an object in the current row
+            if any(room[i][y] in ["plant", "tv", "bed"] for i in range(room_width)):
+                # Go above the object and back onto the same row
+                for i in range(room_width):
+                    above_x = (x + i) % room_width
+                    if room[above_x][y - 1] not in ["plant", "tv", "bed"]:
+                        x = above_x
+                        y -= 1
+                        break
+            else:
+                
+               
+                    
+
+                # Change sweep direction if reaching the room boundary
+                sweep_direction = -sweep_direction
+                y += 1  # Move one row down
+
+                # Check if all rows are cleaned
+                if y >= room_height:
+                    break
+        else:
+            x = next_x
+
+        # Clean the tile if it is dirty
+        if room[x][y] == 0:
+            room[x][y] = 1
+
+        moves += 1
+
+        if is_displayed:
+            draw_room(screen, room, (x, y), font, steps=moves)
+            pygame.display.update()
+
+            # Delay between movements
+            clock.tick(1 / delay)
+
+        # Check if all tiles are cleaned
+        if count_dirty_tiles(room) == 0:
+            break
+
+        # Check if it's taking too many steps
+        if moves >= 5000:
+            print("Faulty room. Regenerating...")
+            return None
+
+    # draw_room(screen, room, (x, y), font, steps=moves)
+    # pygame.display.update()
+    print(f"Pattern cleaning took {moves} steps.")
+    return (x, y), moves
+
