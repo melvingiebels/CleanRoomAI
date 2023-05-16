@@ -11,6 +11,7 @@ objects = [
     {"name": "bed", "width": 2, "height": 5},
 ]
 
+
 def generate_room(starting_point):
     room = [[0 for _ in range(room_height)] for _ in range(room_width)]
 
@@ -39,6 +40,7 @@ def generate_room(starting_point):
     robot_position = starting_point
 
     return room, robot_position
+
 
 # Imports images
 DIRTY_TILE_IMAGE = pygame.image.load("images/dirty_tile.jpg")
@@ -70,7 +72,7 @@ def draw_room(screen, room, robot_position, font, steps):
                 # Pathing tile
                 screen.blit(PATHING_TILE_IMAGE, (x * tile_size, y * tile_size))
             elif room[x][y] == 3:
-                # Pathing tile
+                # Charging station tile
                 screen.blit(CHARGING_STATION_IMAGE, (x * tile_size, y * tile_size))
             elif room[x][y] == "plant":
                 # Plant tile
@@ -78,13 +80,17 @@ def draw_room(screen, room, robot_position, font, steps):
             elif room[x][y] == "tv":
                 # Tv tile
                 tile_color = (255, 255, 0)
-                tile_rect = pygame.Rect(x * tile_size, y * tile_size, tile_size, tile_size)
+                tile_rect = pygame.Rect(
+                    x * tile_size, y * tile_size, tile_size, tile_size
+                )
                 pygame.draw.rect(screen, tile_color, tile_rect)
                 # screen.blit(TV_IMAGE, (x * tile_size, y * tile_size))
             elif room[x][y] == "bed":
                 # Bed tile
                 tile_color = (128, 0, 128)
-                tile_rect = pygame.Rect(x * tile_size, y * tile_size, tile_size, tile_size)
+                tile_rect = pygame.Rect(
+                    x * tile_size, y * tile_size, tile_size, tile_size
+                )
                 pygame.draw.rect(screen, tile_color, tile_rect)
 
     # Draw the robot as an image
@@ -99,25 +105,24 @@ def draw_room(screen, room, robot_position, font, steps):
     # Calculate the total number of spaces occupied by objects
     occupied_spaces = sum(obj["width"] * obj["height"] for obj in objects)
 
-
     text_bg_color = (255, 255, 255)  # white color for the background of the text
-    text_bg_rect = pygame.Rect(600, 0, 200, 600)  # rectangle for the background of the text
-    pygame.draw.rect(screen, text_bg_color, text_bg_rect)  # draw the background of the text
+    text_bg_rect = pygame.Rect(
+        600, 0, 200, 600
+    )  # rectangle for the background of the text
+    pygame.draw.rect(
+        screen, text_bg_color, text_bg_rect
+    )  # draw the background of the text
 
     # Display the current statistics of the room
     cleaned_text = font.render(
-    "Cleaned: {}/{}".format(
-        sum(row.count(1) for row in room),
-        room_width * room_height - occupied_spaces - 1
-    ),
+        "Cleaned: {}/{}".format(
+            sum(row.count(1) for row in room),
+            room_width * room_height - occupied_spaces - 1,
+        ),
         True,
-        (0, 0, 0)
+        (0, 0, 0),
     )
-    steps_text = font.render(
-        "Steps: {}".format(steps),
-        True,
-        (0, 0, 0)
-    )
+    steps_text = font.render("Steps: {}".format(steps), True, (0, 0, 0))
     time_text = font.render(
         "Time: {}".format(pygame.time.get_ticks() // 1000),
         True,
@@ -144,6 +149,7 @@ def generate_and_draw_room(screen, font):
     pygame.display.update()
 
     return room, robot_position
+
 
 def clean_current_room(screen, font, room):
     for x in range(room_width):

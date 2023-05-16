@@ -1,8 +1,19 @@
 import random
 import pygame
 import sys
-from room_generation import generate_room, draw_room, generate_and_draw_room, clean_current_room
-from robot_simulation import bfs, dfs, a_star, random_cleaning
+from room_generation import (
+    draw_room,
+    generate_and_draw_room,
+    clean_current_room,
+)
+from robot_simulation import (
+    bfs,
+    dfs,
+    a_star,
+    random_cleaning,
+    sweep_room,
+    bfs_cleaning,
+)
 from button import Button
 
 pygame.init()
@@ -16,12 +27,18 @@ room, robot_position = generate_and_draw_room(screen, font)
 
 # Create buttons for the different search algorithms
 room_button = Button(440, 10, 120, 40, "New room", (128, 128, 128), (255, 255, 255), 24)
-clean_room_button = Button(440, 60, 120, 40, "Clean room", (128, 128, 128), (255, 255, 255), 24)
+clean_room_button = Button(
+    440, 60, 120, 40, "Clean room", (128, 128, 128), (255, 255, 255), 24
+)
 dfs_button = Button(440, 110, 120, 40, "Run DFS", (0, 128, 0), (255, 255, 255), 24)
 bfs_button = Button(440, 160, 120, 40, "Run BFS", (0, 0, 128), (255, 255, 255), 24)
 astar_button = Button(440, 210, 120, 40, "Run A*", (255, 255, 0), (0, 0, 0), 24)
 random_button = Button(440, 260, 120, 40, "Run Random", (255, 255, 128), (0, 0, 0), 24)
-random_bulk_button = Button(440, 310, 120, 40, "Run RandomX3", (128, 255, 128), (0, 0, 0), 24)
+random_bulk_button = Button(
+    440, 310, 120, 40, "Run RandomX3", (128, 255, 128), (0, 0, 0), 24
+)
+sweep_button = Button(440, 360, 120, 40, "Run spiral", (128, 255, 128), (0, 0, 0), 24)
+bfs_cleaning_button = Button(440, 410, 120, 40, "Run BFS clean", (128, 255, 128), (0, 0, 0), 24)
 
 while True:
     room_button.draw(screen)
@@ -31,6 +48,8 @@ while True:
     astar_button.draw(screen)
     random_button.draw(screen)
     random_bulk_button.draw(screen)
+    sweep_button.draw(screen)
+    bfs_cleaning_button.draw(screen)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -54,7 +73,13 @@ while True:
         elif astar_button.is_clicked(event):
             a_star(screen, font, robot_position, room)
         elif random_button.is_clicked(event):
-            robot_position, moves = random_cleaning(screen, font, robot_position, room, True)
+            robot_position, moves = random_cleaning(
+                screen, font, robot_position, room, True
+            )
+        elif sweep_button.is_clicked(event):
+            sweep_room(screen, font, robot_position, room)
+        elif bfs_cleaning_button.is_clicked(event):
+            bfs_cleaning(screen, font, robot_position, room)
         elif random_bulk_button.is_clicked(event):
             num_rooms = 1000
             total_path_length = 0
