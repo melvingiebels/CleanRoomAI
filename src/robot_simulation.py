@@ -8,6 +8,7 @@ from collections import deque
 import random
 
 
+
 def dfs(screen, font, position, room, visited, steps):
     x, y = position
     if x < 0 or x >= room_width or y < 0 or y >= room_height:
